@@ -5,6 +5,13 @@ namespace Dojo\View\Helper;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Renderer\RendererInterface as Renderer;
 
+/**
+ *
+ * @method void enable() Enables dojo
+ * @method Configuration requireModule(string $modules)
+ * @method Configuration setDijit(string $id, array $params) Set a programmatic dijit (overwrites)
+ * @method Configuration addJavascript(string $js) Add arbitrary javascript to execute in dojo JS container
+ */
 class Dojo extends AbstractHelper
 {
     /**#@+
@@ -65,7 +72,7 @@ class Dojo extends AbstractHelper
      * @param  string $method
      * @param  array $args
      * @return mixed
-     * @throws Zend_Dojo_View_Exception For invalid method calls
+     * @throws \Dojo\View\Exception\RuntimeException For invalid method calls
      */
     public function __call($method, $args)
     {

@@ -149,7 +149,7 @@ class Configuration
     /**
      * Enable dojo
      *
-     * @return Dojo
+     * @return Configuration
      */
     public function enable()
     {
@@ -160,7 +160,7 @@ class Configuration
     /**
      * Disable dojo
      *
-     * @return Dojo
+     * @return Configuration
      */
     public function disable()
     {
@@ -187,7 +187,7 @@ class Configuration
      * Add options for the Dojo Container to use
      *
      * @param array|\Zend\Config\Config Array or \Zend\Config\Config object with options to use
-     * @return Dojo
+     * @return Configuration
      */
     public function setOptions($options)
     {
@@ -258,7 +258,7 @@ class Configuration
      * Specify one or multiple modules to require
      *
      * @param  string|array $modules
-     * @return Dojo
+     * @return Configuration
      */
     public function requireModule($modules)
     {
@@ -296,7 +296,7 @@ class Configuration
      *
      * @param  string $module The module to register a path for
      * @param  string $path The path to register for the module
-     * @return Dojo
+     * @return Configuration
      */
     public function registerModulePath($module, $path)
     {
@@ -322,7 +322,7 @@ class Configuration
      * Add layer (custom build) path
      *
      * @param  string $path
-     * @return Dojo
+     * @return Configuration
      */
     public function addLayer($path)
     {
@@ -348,7 +348,7 @@ class Configuration
      * Remove a registered layer
      *
      * @param  string $path
-     * @return Dojo
+     * @return Configuration
      */
     public function removeLayer($path)
     {
@@ -364,7 +364,7 @@ class Configuration
     /**
      * Clear all registered layers
      *
-     * @return Dojo
+     * @return Configuration
      */
     public function clearLayers()
     {
@@ -376,7 +376,7 @@ class Configuration
      * Set CDN base path
      *
      * @param  string $url
-     * @return Dojo
+     * @return Configuration
      */
     public function setCdnBase($url)
     {
@@ -398,7 +398,7 @@ class Configuration
      * Use CDN, using version specified
      *
      * @param  string $version
-     * @return Dojo
+     * @return Configuration
      */
     public function setCdnVersion($version = null)
     {
@@ -423,7 +423,7 @@ class Configuration
      * Set CDN path to dojo (relative to CDN base + version)
      *
      * @param  string $path
-     * @return Dojo
+     * @return Configuration
      */
     public function setCdnDojoPath($path)
     {
@@ -455,7 +455,7 @@ class Configuration
      * Set path to local dojo
      *
      * @param  string $path
-     * @return Dojo
+     * @return Configuration
      */
     public function setLocalPath($path)
     {
@@ -489,7 +489,7 @@ class Configuration
      *
      * @param  string $option
      * @param  mixed $value
-     * @return Dojo
+     * @return Configuration
      */
     public function setDjConfig(array $config)
     {
@@ -502,7 +502,7 @@ class Configuration
      *
      * @param  string $option
      * @param  mixed $value
-     * @return Dojo
+     * @return Configuration
      */
     public function setDjConfigOption($option, $value)
     {
@@ -541,7 +541,7 @@ class Configuration
      * Add a stylesheet by module name
      *
      * @param  string $module
-     * @return Dojo
+     * @return Configuration
      */
     public function addStylesheetModule($module)
     {
@@ -568,7 +568,7 @@ class Configuration
      * Add a stylesheet
      *
      * @param  string $path
-     * @return Dojo
+     * @return Configuration
      */
     public function addStylesheet($path)
     {
@@ -586,7 +586,7 @@ class Configuration
      * the flag and returns the object.
      *
      * @param  null|bool $flag
-     * @return Dojo|bool
+     * @return Configuration|bool
      */
     public function registerDojoStylesheet($flag = null)
     {
@@ -616,7 +616,7 @@ class Configuration
      * - lambda
      *
      * @param  string $callback Lambda
-     * @return Dojo
+     * @return Configuration
      */
     public function addOnLoad($callback)
     {
@@ -630,7 +630,7 @@ class Configuration
      * Prepend an onLoad event to the list of onLoad actions
      *
      * @param  string $callback Lambda
-     * @return Dojo
+     * @return Configuration
      */
     public function prependOnLoad($callback)
     {
@@ -685,7 +685,7 @@ class Configuration
      *
      * @param  string $id
      * @param  array $params
-     * @return Dojo
+     * @return Configuration
      */
     public function addDijit($id, array $params)
     {
@@ -706,7 +706,7 @@ class Configuration
      *
      * @param  string $id
      * @param  array $params
-     * @return Dojo
+     * @return Configuration
      */
     public function setDijit($id, array $params)
     {
@@ -720,7 +720,7 @@ class Configuration
      * Expects an array of id => array $params pairs
      *
      * @param  array $dijits
-     * @return Dojo
+     * @return Configuration
      */
     public function addDijits(array $dijits)
     {
@@ -736,7 +736,7 @@ class Configuration
      * Expects an array of id => array $params pairs
      *
      * @param  array $dijits
-     * @return Dojo
+     * @return Configuration
      */
     public function setDijits(array $dijits)
     {
@@ -785,7 +785,7 @@ class Configuration
      * Remove a programmatic dijit if it exists
      *
      * @param  string $id
-     * @return Dojo
+     * @return Configuration
      */
     public function removeDijit($id)
     {
@@ -799,7 +799,7 @@ class Configuration
     /**
      * Clear all dijits
      *
-     * @return Dojo
+     * @return Configuration
      */
     public function clearDijits()
     {
@@ -847,7 +847,7 @@ EOJ;
      * Add arbitrary javascript to execute in dojo JS container
      *
      * @param  string $js
-     * @return Dojo
+     * @return Configuration
      */
     public function addJavascript($js)
     {
@@ -877,7 +877,7 @@ EOJ;
     /**
      * Clear arbitrary javascript stack
      *
-     * @return Dojo
+     * @return Configuration
      */
     public function clearJavascript()
     {
@@ -1150,7 +1150,7 @@ EOJ;
      * creation.
      *
      * @param  string $callback
-     * @return Dojo
+     * @return Configuration
      */
     public function _addZendLoad($callback)
     {
