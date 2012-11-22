@@ -1,0 +1,31 @@
+{
+    "name": "51systems/dojo-module",
+    "description": "Provides Dojo 1.x module for zf2",
+    "type": "library",
+    "keywords": [
+        "dojo",
+        "zf2"
+    ],
+    "homepage": "https://github.com/51systems/dojoModule",
+    "authors": [
+        {
+            "name": "Tim Roediger",
+            "email": "superdweebie@gmail.com"
+        },
+        {
+            "name": "Dustin Thomson",
+            "email": "dthomson@51systems.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3"
+    },
+    "autoload": {
+        "psr-0": {
+            "Dojo": "src/"
+        },
+        "classmap" : ["Module.php"]
+    },
+    "bin": [
+    ]
+}
