@@ -16,6 +16,13 @@ use Dojo\View\Exception\RuntimeException;
 class Configuration
 {
     /**
+     * When paths are passed into the dojo configuration object, any instances of this
+     * token will be replaced with the dojo path.
+     * @var string
+     */
+    const DOJO_PATH_TOKEN = "@dojoPath";
+
+    /**
      * @var \Zend\View\Renderer\RendererInterface
      */
     public $view;
@@ -565,9 +572,9 @@ class Configuration
     }
 
     /**
-     * Add a stylesheet
+     * Add a stylesheet.
      *
-     * @param  string $path
+     * @param  string $path The path to the sylesheet. Any instances of string @dojoPath will be replaced with the dojo path
      * @return Configuration
      */
     public function addStylesheet($path)
@@ -983,7 +990,7 @@ EOJ;
         }
 
         foreach ($this->getStylesheets() as $stylesheet) {
-            $stylesheets[] = $stylesheet;
+            $stylesheets[] = str_ireplace(self::DOJO_PATH_TOKEN, $base, $stylesheet);
         }
 
         if ($this->_registerDojoStylesheet) {
