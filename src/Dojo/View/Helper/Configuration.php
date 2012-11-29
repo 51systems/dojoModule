@@ -118,10 +118,10 @@ class Configuration
     protected $_modules = array();
 
     /**
-     * Registered module paths
+     * Registered package paths
      * @var array
      */
-    protected $_modulePaths = array();
+    protected $_packagePaths = array();
 
     /**
      * Actions to perform on window load
@@ -305,11 +305,11 @@ class Configuration
      * @param  string $path The path to register for the module
      * @return Configuration
      */
-    public function registerModulePath($module, $path)
+    public function registerPackagePath($module, $path)
     {
         $path = (string) $path;
-        if (!in_array($module, $this->_modulePaths)) {
-            $this->_modulePaths[$module] = $path;
+        if (!in_array($module, $this->_packagePaths)) {
+            $this->_packagePaths[$module] = $path;
         }
 
         return $this;
@@ -320,9 +320,9 @@ class Configuration
      *
      * @return array
      */
-    public function getModulePaths()
+    public function getPackagePaths()
     {
-        return $this->_modulePaths;
+        return $this->_packagePaths;
     }
 
     /**
@@ -1021,6 +1021,22 @@ EOJ;
     protected function _renderDjConfig()
     {
         $djConfigValues = $this->getDjConfig();
+
+        if (!empty($this->_packagePaths)) {
+            //Write out the package config. Expects format:
+            //packages:[{
+            //  name:"package1",
+            //  location:"path/to/some/place/package1"
+            //}
+            $djConfigValues['packages'] = array_map(function($key, $value){
+                return array(
+                    'name' => $key,
+                    'location' => $value
+                );
+            }, array_keys($this->_packagePaths), $this->_packagePaths);
+        }
+
+
         if (empty($djConfigValues)) {
             return '';
         }
@@ -1095,12 +1111,6 @@ EOJ;
     protected function _renderExtras()
     {
         $js = array();
-        $modulePaths = $this->getModulePaths();
-        if (!empty($modulePaths)) {
-            foreach ($modulePaths as $module => $path) {
-                $js[] =  'dojo.registerModulePath("' . $this->view->escape($module) . '", "' . $this->view->escape($path) . '");';
-            }
-        }
 
         $modules = $this->getModules();
         if (!empty($modules)) {
