@@ -5,5 +5,8 @@ return array(
         'factories' => array(
             'Dojo' => 'Dojo\View\Helper\DojoFactory',
         ),
+        'invokables' => array(
+            'JsonRestStore' => 'Dojo\View\Helper\JsonRestStore'
+        )
     ),
 );
