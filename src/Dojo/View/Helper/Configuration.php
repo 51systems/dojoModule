@@ -834,13 +834,16 @@ class Configuration
         if (!$this->_dijitLoaderRegistered) {
             $js =<<<EOJ
 function() {
-    dojo.forEach(zendDijits, function(info) {
-        var n = dojo.byId(info.id);
-        if (null != n) {
-            dojo.attr(n, dojo.mixin({ id: info.id }, info.params));
+    require(["dojo/_base/array", "dojo/dom", "dojo/dom-attr", "dojo/parser"], function(array, dom, attr, parser) {
+            array.forEach(zendDijits, function(info) {
+                var n = dom.byId(info.id);
+                if (null != n) {
+                    attr.set(n, dojo.mixin({ id: info.id }, info.params));
+                }
+            });
+            parser.parse();
         }
-    });
-    dojo.parser.parse();
+    );
 }
 EOJ;
             $this->requireModule('dojo.parser');
@@ -1123,12 +1126,12 @@ EOJ;
         // Get Zend specific onLoad actions; these will always be first to
         // ensure that dijits are created in the correct order
         foreach ($this->_getZendLoadActions() as $callback) {
-            $onLoadActions[] = 'dojo.addOnLoad(' . $callback . ');';
+            $onLoadActions[] = 'ready(' . $callback . ');';
         }
 
         // Get all other onLoad actions
         foreach ($this->getOnLoadActions() as $callback) {
-            $onLoadActions[] = 'dojo.addOnLoad(' . $callback . ');';
+            $onLoadActions[] = 'ready(' . $callback . ');';
         }
 
         $javascript = implode("\n    ", $this->getJavascript());
@@ -1139,7 +1142,9 @@ EOJ;
         }
 
         if (!empty($onLoadActions)) {
+            $content .= 'require(["dojo/ready"], function (ready) {';
             $content .= implode("\n    ", $onLoadActions) . "\n";
+            $content .= "});";
         }
 
         if (!empty($javascript)) {
