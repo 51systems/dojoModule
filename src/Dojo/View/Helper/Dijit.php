@@ -267,7 +267,8 @@ abstract class Dijit extends AbstractHtmlElement
             if (isset($attribs['required'])) {
                 $attribs['required'] = ($attribs['required']) ? 'true' : 'false';
             }
-            $attribs['dojoType'] = $dijit;
+
+            $attribs['data-dojo-type'] = $dijit;
         } elseif (!$this->_useProgrammaticNoScript()) {
             $this->_createDijit($dijit, $attribs['id'], $params);
         }
@@ -285,7 +286,7 @@ abstract class Dijit extends AbstractHtmlElement
      */
     protected function _createDijit($dijit, $id, array $params)
     {
-        $params['dojoType'] = $dijit;
+        $params['data-dojo-type'] = $dijit;
 
         array_walk_recursive($params, array($this, '_castBoolToString'));
 

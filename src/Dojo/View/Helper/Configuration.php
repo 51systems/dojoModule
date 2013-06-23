@@ -55,7 +55,7 @@ class Configuration
      * Dojo version to use from CDN
      * @var string
      */
-    protected $_cdnVersion = '1.9.0';
+    protected $_cdnVersion = '1.9.1';
 
     /**
      * Has the dijit loader been registered?
@@ -113,7 +113,7 @@ class Configuration
 
     /**
      * Modules to require
-     * @var array
+     * @var string[]
      */
     protected $_modules = array();
 
@@ -276,7 +276,7 @@ class Configuration
         $modules = (array) $modules;
 
         foreach ($modules as $mod) {
-            if (!preg_match('/^[a-z][a-z0-9._-]+$/i', $mod)) {
+            if (!preg_match('%^[a-z][-._/a-z0-9]+$%i', $mod)) {
                 throw new InvalidArgumentException(sprintf('Module name specified, "%s", contains invalid characters', (string) $mod));
             }
 
@@ -831,14 +831,24 @@ class Configuration
      */
     public function registerDijitLoader()
     {
+        $modules = array_filter($this->getModules(), function($moduleName) {
+            return strpos($moduleName, '/') !== false;
+        });
+
+        if (!empty($modules)) {
+            $modules = ', "' . join('","', $modules) . '"';
+        } else {
+            $modules = '';
+        }
+
         if (!$this->_dijitLoaderRegistered) {
             $js =<<<EOJ
 function() {
-    require(["dojo/_base/array", "dojo/dom", "dojo/dom-attr", "dojo/parser"], function(array, dom, attr, parser) {
+    require(["dojo/_base/lang", "dojo/_base/array", "dojo/dom", "dojo/dom-attr", "dojo/parser" $modules], function(lang, array, dom, attr, parser) {
             array.forEach(zendDijits, function(info) {
                 var n = dom.byId(info.id);
                 if (null != n) {
-                    attr.set(n, dojo.mixin({ id: info.id }, info.params));
+                    attr.set(n, lang.mixin({ id: info.id }, info.params));
                 }
             });
             parser.parse();
@@ -846,7 +856,6 @@ function() {
     );
 }
 EOJ;
-            $this->requireModule('dojo.parser');
             $this->_addZendLoad($js);
             $this->addJavascript('var zendDijits = ' . $this->dijitsToJson() . ';');
             $this->_dijitLoaderRegistered = true;
@@ -1046,7 +1055,7 @@ EOJ;
 
         $scriptTag = '<script type="text/javascript">' . PHP_EOL
             . (($this->_isXhtml) ? '//<![CDATA[' : '//<!--') . PHP_EOL
-            . '    var djConfig = ' . Json::encode($djConfigValues) . ';' . PHP_EOL
+            . '    var dojoConfig = ' . Json::encode($djConfigValues) . ';' . PHP_EOL
             . (($this->_isXhtml) ? '//]]>' : '//-->') . PHP_EOL
             . '</script>';
 
@@ -1115,7 +1124,10 @@ EOJ;
     {
         $js = array();
 
-        $modules = $this->getModules();
+        $modules = array_filter($this->getModules(), function($moduleName) {
+            return strpos($moduleName, '/') === false;
+        });
+
         if (!empty($modules)) {
             foreach ($modules as $module) {
                 $js[] = 'dojo.require("' . $this->view->escapeJs($module) . '");';

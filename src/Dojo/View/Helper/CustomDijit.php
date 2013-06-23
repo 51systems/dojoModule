@@ -59,18 +59,7 @@ class CustomDijit extends DijitContainer
             return $this;
         }
 
-        if (!array_key_exists('dojoType', $params)
-            && (null === $this->_defaultDojoType)
-        ) {
-            throw new InvalidArgumentException('No dojoType specified; cannot create dijit');
-        } elseif (array_key_exists('dojoType', $params)) {
-            $this->_dijit  = $params['dojoType'];
-            $this->_module = $params['dojoType'];
-            unset($params['dojoType']);
-        } else {
-            $this->_dijit  = $this->_defaultDojoType;
-            $this->_module = $this->_defaultDojoType;
-        }
+        $this->_validateDojoType($params);
 
         if (array_key_exists('rootNode', $params)) {
             $this->setRootNode($params['rootNode']);
@@ -78,6 +67,31 @@ class CustomDijit extends DijitContainer
         }
 
         return $this->_createLayoutContainer($id, $value, $params, $attribs);
+    }
+
+    /**
+     * Validate the dojo data type.
+     * @param $params
+     * @throws \Dojo\View\Exception\InvalidArgumentException
+     */
+    private function _validateDojoType($params)
+    {
+        if (!array_key_exists('dojoType', $params) && !array_key_exists('data-dojo-type')
+            && (null === $this->_defaultDojoType)
+        ) {
+            throw new InvalidArgumentException('No dojoType specified; cannot create dijit');
+        } elseif (array_key_exists('dojoType', $params)) {
+            $this->_dijit  = $params['dojoType'];
+            $this->_module = $params['dojoType'];
+            unset($params['dojoType']);
+        } elseif (array_key_exists('data-dojo-type', $params)) {
+            $this->_dijit  = $params['data-dojo-type'];
+            $this->_module = $params['data-dojo-type'];
+            unset($params['data-dojo-type']);
+        } else {
+            $this->_dijit  = $this->_defaultDojoType;
+            $this->_module = $this->_defaultDojoType;
+        }
     }
 
     /**
@@ -93,18 +107,7 @@ class CustomDijit extends DijitContainer
      */
     public function captureStart($id, array $params = array(), array $attribs = array())
     {
-        if (!array_key_exists('dojoType', $params)
-            && (null === $this->_defaultDojoType)
-        ) {
-            throw new InvalidArgumentException('No dojoType specified; cannot create dijit');
-        } elseif (array_key_exists('dojoType', $params)) {
-            $this->_dijit  = $params['dojoType'];
-            $this->_module = $params['dojoType'];
-            unset($params['dojoType']);
-        } else {
-            $this->_dijit  = $this->_defaultDojoType;
-            $this->_module = $this->_defaultDojoType;
-        }
+        $this->_validateDojoType($params);
 
         return parent::captureStart($id, $params, $attribs);
     }
