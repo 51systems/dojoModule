@@ -109,7 +109,7 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
         if ($entity == null) {
             /** @var Response $response */
             $response = $this->getResponse();
-            
+
             if ($response->getStatusCode() == Response::STATUS_CODE_200)
                 $response->setStatusCode(Response::STATUS_CODE_404);
 
