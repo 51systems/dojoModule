@@ -77,7 +77,7 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
         
         $entity->fromArray($data);
 
-        $em = $this->entityManagerProvider()->getEntityManager();
+        $em = $this->getEntityManager();
         $em->persist($entity);
         $em->flush();
 
