@@ -52,7 +52,11 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
         if ($entity == null) {
             /** @var Response $response */
             $response = $this->getResponse();
-            $response->setStatusCode(Response::STATUS_CODE_404);
+
+            if ($response->getStatusCode() == Response::STATUS_CODE_200)
+                $response->setStatusCode(Response::STATUS_CODE_404);
+
+            return $response;
         }
         
         return new JsonModel($entity->toArray());
@@ -72,7 +76,11 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
         if ($entity == null) {
             /** @var Response $response */
             $response = $this->getResponse();
-            $response->setStatusCode(Response::STATUS_CODE_404);
+
+            if ($response->getStatusCode() == Response::STATUS_CODE_200)
+                $response->setStatusCode(Response::STATUS_CODE_404);
+
+            return $response;
         }
         
         $entity->fromArray($data);
@@ -101,7 +109,11 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
         if ($entity == null) {
             /** @var Response $response */
             $response = $this->getResponse();
-            $response->setStatusCode(Response::STATUS_CODE_404);
+            
+            if ($response->getStatusCode() == Response::STATUS_CODE_200)
+                $response->setStatusCode(Response::STATUS_CODE_404);
+
+            return $response;
         }
 
         $em = $this->getEntityManager();
