@@ -831,20 +831,10 @@ class Configuration
      */
     public function registerDijitLoader()
     {
-        $modules = array_filter($this->getModules(), function($moduleName) {
-            return strpos($moduleName, '/') !== false;
-        });
-
-        if (!empty($modules)) {
-            $modules = ', "' . join('","', $modules) . '"';
-        } else {
-            $modules = '';
-        }
-
         if (!$this->_dijitLoaderRegistered) {
             $js =<<<EOJ
 function() {
-    require(["dojo/_base/lang", "dojo/_base/array", "dojo/dom", "dojo/dom-attr", "dojo/parser" $modules], function(lang, array, dom, attr, parser) {
+    require(["dojo/_base/lang", "dojo/_base/array", "dojo/dom", "dojo/dom-attr", "dojo/parser"], function(lang, array, dom, attr, parser) {
             array.forEach(zendDijits, function(info) {
                 var n = dom.byId(info.id);
                 if (null != n) {
@@ -1046,6 +1036,15 @@ EOJ;
                     'location' => $value
                 );
             }, array_keys($this->_packagePaths), $this->_packagePaths);
+        }
+
+        //Require dependencies
+        $modules = array_filter($this->getModules(), function($moduleName) {
+            return strpos($moduleName, '/') !== false;
+        });
+
+        if (!empty($modules)) {
+            $djConfigValues['deps'] = $modules;
         }
 
 
