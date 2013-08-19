@@ -2,6 +2,7 @@
 
 namespace Dojo\View\Helper;
 
+use Zend\Json\Expr as JsonExpr;
 use Zend\Json\Json;
 use Dojo\View\Exception\InvalidArgumentException;
 use Dojo\View\Exception\RuntimeException;
@@ -1030,12 +1031,16 @@ EOJ;
             //  name:"package1",
             //  location:"path/to/some/place/package1"
             //}
-            $djConfigValues['packages'] = array_map(function($key, $value){
+
+            $packages = array_map(function($key, $value){
                 return array(
                     'name' => $key,
                     'location' => $value
                 );
             }, array_keys($this->_packagePaths), $this->_packagePaths);
+
+            //If we don't grab array_values, an object is output
+            $djConfigValues['packages'] = array_values($packages);
         }
 
         //Require dependencies
@@ -1044,7 +1049,8 @@ EOJ;
         });
 
         if (!empty($modules)) {
-            $djConfigValues['deps'] = $modules;
+            //If we don't grab array_values, an object is output
+            $djConfigValues['deps'] = array_values($modules);
         }
 
 
