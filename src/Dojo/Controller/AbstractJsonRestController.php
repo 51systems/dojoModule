@@ -13,6 +13,7 @@ namespace Dojo\Controller;
 use Dojo\ArraySerializerInterface;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
+use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\Model\JsonModel;
 
 /**
@@ -35,9 +36,15 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
      * If the entity does not exist, returns null.
      *
      * @param $id
-     * @return ArraySerializerInterface
+     * @return mixed
      */
     abstract protected function getEntity($id);
+
+    /**
+     * Returns the hydrator to use for object hydration.
+     * @return HydratorInterface
+     */
+    abstract protected function getHydrator();
 
     /**
      * Return single resource
@@ -59,7 +66,7 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
             return $response;
         }
         
-        return new JsonModel($entity->toArray());
+        return new JsonModel($this->getHydrator()->extract($entity));
     }
 
     /**
@@ -82,8 +89,8 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
 
             return $response;
         }
-        
-        $entity->fromArray($data);
+
+        $this->getHydrator()->hydrate($data, $entity);
 
         $em = $this->getEntityManager();
         $em->persist($entity);
@@ -93,7 +100,7 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
         $response = $this->getResponse();
         $response->setStatusCode(Response::STATUS_CODE_200);
 
-        return new JsonModel($entity->toArray());
+        return new JsonModel($this->getHydrator()->extract($entity));
     }
 
     /**
