@@ -16,6 +16,11 @@ use Zend\View\Model\JsonModel;
  */
 abstract class AbstractJsonRestController extends AbstractRestfulController
 {
+    /**
+     * Static hydrator instance.
+     * @var HydratorInterface
+     */
+    private static $hydratorInstance;
 
     /**
      * Returns the Entity manager to be used for database operations.
@@ -39,7 +44,11 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
      */
     protected function getHydrator()
     {
-        return new DoctrineObject($this->getEntityManager());
+        if (!isset(self::$hydratorInstance)) {
+            self::$hydratorInstance = new DoctrineObject($this->getEntityManager());
+        }
+
+        return self::$hydratorInstance;
     }
 
     /**
