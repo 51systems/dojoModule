@@ -1,16 +1,9 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: dustin
- * Date: 23/06/13
- * Time: 5:09 PM
- * To change this template use File | Settings | File Templates.
- */
 
 namespace Dojo\Controller;
 
 
-use Dojo\ArraySerializerInterface;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Stdlib\Hydrator\HydratorInterface;
@@ -44,7 +37,10 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
      * Returns the hydrator to use for object hydration.
      * @return HydratorInterface
      */
-    abstract protected function getHydrator();
+    protected function getHydrator()
+    {
+        return new DoctrineObject($this->getEntityManager());
+    }
 
     /**
      * Return single resource
