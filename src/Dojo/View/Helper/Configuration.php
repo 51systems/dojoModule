@@ -56,7 +56,7 @@ class Configuration
      * Dojo version to use from CDN
      * @var string
      */
-    protected $_cdnVersion = '1.10.0';
+    protected $_cdnVersion = '1.10.1';
 
     /**
      * Has the dijit loader been registered?
