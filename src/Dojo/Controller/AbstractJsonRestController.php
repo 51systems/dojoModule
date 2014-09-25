@@ -8,6 +8,8 @@ use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\Model\JsonModel;
+use Zend\Http\Request;
+use Zend\Paginator\Paginator as ZendPaginator;
 
 /**
  * Class AbstractJsonRestController
@@ -137,5 +139,39 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
         $response->setStatusCode(Response::STATUS_CODE_204);
 
         return $response;
+    }
+
+    /**
+     * Preforms automatic results pagination that works with the dojox.data.JsonRestStore
+     *
+     * @param ZendPaginator $p
+     * @return ZendPaginator
+     */
+    protected function paginateResults (ZendPaginator $p)
+    {
+        //handle the pagination
+        /** @var Request $request */
+        $request = $this->getRequest();
+        $range = $request->getHeader('Range');
+        if ($range) {
+            //We have a range specified
+            if (preg_match('/items=(?P<start>[\d]+)-(?P<end>[\d]+)/i', $range->toString(), $regs)) {
+                $itemsPerPage = ($regs['end'] - $regs['start']) + 1;
+                $currentPage = ($regs['start'] / $itemsPerPage) + 1;
+
+                $p->setItemCountPerPage($itemsPerPage);
+                $p->setCurrentPageNumber($currentPage);
+
+                /** @var Response $response */
+                $response = $this->getResponse();
+                $response->getHeaders()->addHeaderLine('Content-Range', sprintf('items %d-%d/%d',
+                    $regs['start'],
+                    $regs['end'],
+                    $p->getTotalItemCount()
+                ));
+            }
+        }
+
+        return $p;
     }
 }
