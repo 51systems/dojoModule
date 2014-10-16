@@ -156,8 +156,8 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
         if ($range) {
             //We have a range specified
             if (preg_match('/items=(?P<start>[\d]+)-(?P<end>[\d]+)/i', $range->toString(), $regs)) {
-                $itemsPerPage = ($regs['end'] - $regs['start']) + 1;
-                $currentPage = ($regs['start'] / $itemsPerPage) + 1;
+                $itemsPerPage = ($regs['end'] - $regs['start']);
+                $currentPage = ceil($regs['start'] / $itemsPerPage);
 
                 $p->setItemCountPerPage($itemsPerPage);
                 $p->setCurrentPageNumber($currentPage);
