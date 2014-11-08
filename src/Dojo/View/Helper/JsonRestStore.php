@@ -13,13 +13,13 @@ class JsonRestStore extends CustomDijit
      * Dijit being used
      * @var string
      */
-    protected $_dijit  = 'dojox.data.JsonRestStore';
+    protected $_dijit  = 'dojox/data/JsonRestStore';
 
     /**
      * Dojo module to use
      * @var string
      */
-    protected $_module = 'dojox.data.JsonRestStore';
+    protected $_module = 'dojox/data/JsonRestStore';
 
     /**
      * Creates a new jsonrestStore instance
