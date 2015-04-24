@@ -3,12 +3,16 @@
 namespace Dojo\Controller;
 
 
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\Model\JsonModel;
 use Zend\Http\Request;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Zend\Paginator\Paginator as ZendPaginator;
 
 /**
@@ -144,15 +148,28 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
     /**
      * Preforms automatic results pagination that works with the dojox.data.JsonRestStore
      *
-     * @param ZendPaginator $p
+     * @param ZendPaginator|Query|QueryBuilder $p
      * @return ZendPaginator
      */
-    protected function paginateResults (ZendPaginator $p)
+    protected function paginateResults ($p)
     {
+        if ($p instanceof QueryBuilder) {
+            $p = $p->getQuery();
+        }
+
+        if ($p instanceof Query) {
+            $p = new ZendPaginator(new PaginatorAdapter(new ORMPaginator($p)));
+        }
+
+        if (!($p instanceof ZendPaginator)) {
+            throw new \InvalidArgumentException('expected Zend\Paginator\Paginator, got ' . get_class($p));
+        }
+
         //handle the pagination
         /** @var Request $request */
         $request = $this->getRequest();
         $range = $request->getHeader('Range');
+
         if ($range) {
             //We have a range specified
             if (preg_match('/items=(?P<start>[\d]+)-(?P<end>[\d]+)/i', $range->toString(), $regs)) {
@@ -161,16 +178,25 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
 
                 $p->setItemCountPerPage($itemsPerPage);
                 $p->setCurrentPageNumber($currentPage);
-
-                /** @var Response $response */
-                $response = $this->getResponse();
-                $response->getHeaders()->addHeaderLine('Content-Range', sprintf('items %d-%d/%d',
-                    $regs['start'],
-                    $regs['end'],
-                    $p->getTotalItemCount()
-                ));
             }
+        } else {
+            //the range was not specified, put all of them on a single page
+            $p->setItemCountPerPage($p->getTotalItemCount());
         }
+
+        $start = $p->getItemCountPerPage() * ($p->getCurrentPageNumber()-1);
+        $end = $p->getTotalItemCount() < $p->getItemCountPerPage()?
+            $p->getTotalItemCount() :
+            $p->getItemCountPerPage() * $p->getCurrentPageNumber();
+
+        /** @var Response $response */
+        $response = $this->getResponse();
+        $response->getHeaders()->addHeaderLine('Content-Range', sprintf('items %d-%d/%d',
+            $start,
+            $end,
+            $p->getTotalItemCount()
+        ));
+
 
         return $p;
     }
