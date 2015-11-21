@@ -51,7 +51,13 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
     protected function getHydrator()
     {
         if (!isset(self::$hydratorInstance)) {
-            self::$hydratorInstance = new DoctrineObject($this->getEntityManager());
+            if ($this->getEntityManager() == $this->getServiceLocator()->get('doctrine.entitymanager.orm_default')) {
+                //We are using the default entity manager. Its safe to use the default hydrator
+                $manager = $this->getServiceLocator()->get('hydratorManager');
+                self::$hydratorInstance = $manager->get(DoctrineObject::class);
+            } else {
+                self::$hydratorInstance = new DoctrineObject($this->getEntityManager());
+            }
         }
 
         return self::$hydratorInstance;

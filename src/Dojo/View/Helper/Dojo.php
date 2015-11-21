@@ -59,7 +59,7 @@ class Dojo extends AbstractHelper
     /**
      * Return dojo container
      *
-     * @return Zend_Dojo_View_Helper_Dojo_Container
+     * @return Configuration
      */
     public function dojo()
     {
