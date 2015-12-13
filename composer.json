@@ -23,8 +23,8 @@
         "zendframework/zend-view": ">=2.5.0"
     },
     "autoload": {
-        "psr-0": {
-            "Dojo": "src/"
+        "psr-4": {
+            "Dojo\\": "src/"
         },
         "classmap" : ["Module.php"]
     },
