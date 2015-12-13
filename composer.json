@@ -1,33 +1,42 @@
 {
-    "name": "51systems/dojo-module",
-    "description": "Provides Dojo 1.x module for zf2",
-    "type": "library",
-    "keywords": [
-        "dojo",
-        "zf2"
-    ],
-    "homepage": "https://github.com/51systems/dojoModule",
-    "authors": [
-        {
-            "name": "Tim Roediger",
-            "email": "superdweebie@gmail.com"
-        },
-        {
-            "name": "Dustin Thomson",
-            "email": "dthomson@51systems.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.3",
-        "zendframework/zend-stdlib": ">=2.5.0",
-        "zendframework/zend-view": ">=2.5.0"
+  "name": "51systems/dojo-module",
+  "description": "Provides Dojo 1.x module for zf2",
+  "type": "library",
+  "keywords": [
+    "dojo",
+    "zf2"
+  ],
+  "homepage": "https://github.com/51systems/dojoModule",
+  "authors": [
+    {
+      "name": "Tim Roediger",
+      "email": "superdweebie@gmail.com"
     },
-    "autoload": {
-        "psr-4": {
-            "Dojo\\": "src/"
-        },
-        "classmap" : ["Module.php"]
+    {
+      "name": "Dustin Thomson",
+      "email": "dthomson@51systems.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.3",
+    "zendframework/zend-stdlib": ">=2.5.0",
+    "zendframework/zend-view": ">=2.5.0",
+    "zendframework/zend-modulemanager": ">=2.5.0",
+    "zendframework/zend-config": ">=2.5.0",
+    "zendframework/zend-json": ">=2.5.0"
+  },
+  "require-dev": {
+    "phpunit/PHPUnit": "~4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dojo\\": "src/"
     },
-    "bin": [
-    ]
+    "classmap" : ["Module.php"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "DojoTest\\": "test/"
+    }
+  }
 }

@@ -7,6 +7,8 @@ use Zend\Json\Expr as JsonExpr;
 use Zend\Json\Json;
 use Dojo\View\Exception\InvalidArgumentException;
 use Dojo\View\Exception\RuntimeException;
+use Zend\View\Renderer\PhpRenderer;
+use Zend\View\Renderer\RendererInterface;
 
 /**
  * A dojo view helper. Based off original Zend Framework 1.x code and Tim Roediger's ZF2 Dojo Module.
@@ -18,16 +20,14 @@ use Dojo\View\Exception\RuntimeException;
 class Configuration
 {
     /**
-     * When paths are passed into the dojo configuration object, any instances of this
-     * token will be replaced with the dojo path.
-     * @var string
-     */
-    const DOJO_PATH_TOKEN = "@dojoPath";
-
-    /**
      * @var \Zend\View\Renderer\RendererInterface
      */
     public $view;
+
+    /**
+     * @var DojoConfig
+     */
+    protected $dojoConfig;
 
     /**
      * addOnLoad capture lock
@@ -72,12 +72,6 @@ class Configuration
     protected $_dijits = array();
 
     /**
-     * Dojo configuration
-     * @var array
-     */
-    protected $_djConfig = array();
-
-    /**
      * Whether or not dojo is enabled
      * @var bool
      */
@@ -120,12 +114,6 @@ class Configuration
     protected $_modules = array();
 
     /**
-     * Registered package paths
-     * @var array
-     */
-    protected $_packagePaths = array();
-
-    /**
      * Actions to perform on window load
      * @var array
      */
@@ -138,12 +126,6 @@ class Configuration
     protected $_registerDojoStylesheet = false;
 
     /**
-     * Style sheet modules to load
-     * @var array
-     */
-    protected $_stylesheetModules = array();
-
-    /**
      * Local stylesheets
      * @var array
      */
@@ -154,6 +136,19 @@ class Configuration
      * @var array
      */
     protected $_zendLoadActions = array();
+
+    /**
+     * Flag to indicate if the declarative style of dojo should be used.
+     *
+     * @var boolean
+     */
+    protected $useDeclarative;
+
+    public function __construct($useDeclarative)
+    {
+        $this->dojoConfig = new DojoConfig();
+        $this->useDeclarative = $useDeclarative;
+    }
 
     /**
      * Enable dojo
@@ -187,7 +182,7 @@ class Configuration
         return $this->_enabled;
     }
 
-    public function setView(\Zend\View\Renderer\RendererInterface $view)
+    public function setView(RendererInterface $view)
     {
         $this->view = $view;
     }
@@ -230,12 +225,6 @@ class Configuration
                     break;
                 case 'djconfig':
                     $this->setDjConfig($value);
-                    break;
-                case 'stylesheetmodules':
-                    $value = (array) $value;
-                    foreach($value as $module) {
-                        $this->addStylesheetModule($module);
-                    }
                     break;
                 case 'stylesheets':
                     $value = (array) $value;
@@ -462,83 +451,13 @@ class Configuration
     }
 
     /**
-     * Set Dojo configuration
-     *
-     * @param  string $option
-     * @param  mixed $value
-     * @return Configuration
-     */
-    public function setDjConfig(array $config)
-    {
-        $this->_djConfig = $config;
-        return $this;
-    }
-
-    /**
-     * Set Dojo configuration option
-     *
-     * @param  string $option
-     * @param  mixed $value
-     * @return Configuration
-     */
-    public function setDjConfigOption($option, $value)
-    {
-        $option = (string) $option;
-        $this->_djConfig[$option] = $value;
-        return $this;
-    }
-
-    /**
      * Retrieve dojo configuration values
      *
-     * @return array
+     * @return DojoConfig
      */
-    public function getDjConfig()
+    public function getDojoConfig()
     {
-        return $this->_djConfig;
-    }
-
-    /**
-     * Get dojo configuration value
-     *
-     * @param  string $option
-     * @param  mixed $default
-     * @return mixed
-     */
-    public function getDjConfigOption($option, $default = null)
-    {
-        $option = (string) $option;
-        if (array_key_exists($option, $this->_djConfig)) {
-            return $this->_djConfig[$option];
-        }
-        return $default;
-    }
-
-    /**
-     * Add a stylesheet by module name
-     *
-     * @param  string $module
-     * @return Configuration
-     */
-    public function addStylesheetModule($module)
-    {
-        if (!preg_match('/^[a-z0-9]+\.[a-z0-9_-]+(\.[a-z0-9_-]+)*$/i', $module)) {
-            throw new InvalidArgumentException('Invalid stylesheet module specified');
-        }
-        if (!in_array($module, $this->_stylesheetModules)) {
-            $this->_stylesheetModules[] = $module;
-        }
-        return $this;
-    }
-
-    /**
-     * Get all stylesheet modules currently registered
-     *
-     * @return array
-     */
-    public function getStylesheetModules()
-    {
-        return $this->_stylesheetModules;
+        return $this->dojoConfig;
     }
 
     /**
@@ -905,12 +824,14 @@ EOJ;
             return '';
         }
 
-        $this->_isXhtml = $this->view->doctype()->isXhtml();
+        if ($this->view instanceof PhpRenderer) {
+            $this->_isXhtml = $this->view->doctype()->isXhtml();
+        } else {
+            $this->_isXhtml = false;
+        }
 
-        if (Dojo::useDeclarative()) {
-            if (null === $this->getDjConfigOption('parseOnLoad')) {
-                $this->setDjConfigOption('parseOnLoad', true);
-            }
+        if ($this->useDeclarative) {
+            $this->getDojoConfig()->setParseOnLoad(true);
         }
 
         if (!empty($this->_dijits)) {
@@ -918,7 +839,7 @@ EOJ;
         }
 
         $html  = $this->_renderStylesheets() . PHP_EOL
-            . $this->_renderDjConfig() . PHP_EOL
+            . $this->_renderDojoConfig() . PHP_EOL
             . $this->_renderDojoScriptTag() . PHP_EOL
             . $this->_renderLayers() . PHP_EOL
             . $this->_renderExtras();
@@ -954,15 +875,34 @@ EOJ;
             $base = $this->_getLocalRelativePath();
         }
 
-        $registeredStylesheets = $this->getStylesheetModules();
-        foreach ($registeredStylesheets as $stylesheet) {
-            $themeName     = substr($stylesheet, strrpos($stylesheet, '.') + 1);
-            $stylesheet    = str_replace('.', '/', $stylesheet);
-            $stylesheets[] = $base . '/' . $stylesheet . '/' . $themeName . '.css';
+
+        $packages = $this->getDojoConfig()->getPackages();
+
+        if (!isset($packages['dojo'])) {
+            $packages['dojo'] = ['location' => $base];
+        }
+
+        if (!isset($packages['dijit'])) {
+            $packages['dijit'] = ['location' => $base . '/dijit'];
+        }
+
+        if (!isset($packages['dojox'])) {
+            $packages['dojox'] = ['location' => $base . '/dojox'];
         }
 
         foreach ($this->getStylesheets() as $stylesheet) {
-            $stylesheets[] = str_ireplace(self::DOJO_PATH_TOKEN, $base, $stylesheet);
+
+            //Check to see if the stylesheet is prefixed by any of the
+            //package names. If so, replace the prefix by the package path.
+            if (($pos = stripos($stylesheet, '/') !== false)) {
+                $prefix = substr($stylesheet, 0, $pos);
+
+                if (isset($packages[$prefix])) {
+                    $stylesheet = $packages['location'] . '/' . substr($stylesheet, strlen($prefix));
+                }
+            }
+
+            $stylesheets[] = $stylesheet;
         }
 
         if ($this->_registerDojoStylesheet) {
@@ -990,26 +930,16 @@ EOJ;
      *
      * @return string
      */
-    protected function _renderDjConfig()
+    protected function _renderDojoConfig()
     {
-        $djConfigValues = $this->getDjConfig();
+        $config = $this->getDojoConfig();
 
-        if (!empty($this->_packagePaths)) {
-            //Write out the package config. Expects format:
-            //packages:[{
-            //  name:"package1",
-            //  location:"path/to/some/place/package1"
-            //}
+        $configArray = [];
 
-            $packages = array_map(function($key, $value){
-                return array(
-                    'name' => $key,
-                    'location' => $value
-                );
-            }, array_keys($this->_packagePaths), $this->_packagePaths);
-
+        $packages = $config->getPackages();
+        if (!empty($packages)) {
             //If we don't grab array_values, an object is output
-            $djConfigValues['packages'] = array_values($packages);
+            $configArray['packages'] = $packages;
         }
 
         //Require dependencies
@@ -1019,17 +949,17 @@ EOJ;
 
         if (!empty($modules)) {
             //If we don't grab array_values, an object is output
-            $djConfigValues['deps'] = array_values($modules);
+            $configArray['deps'] = array_values($modules);
         }
 
 
-        if (empty($djConfigValues)) {
+        if (empty($configArray)) {
             return '';
         }
 
         $scriptTag = '<script type="text/javascript">' . PHP_EOL
             . (($this->_isXhtml) ? '//<![CDATA[' : '//<!--') . PHP_EOL
-            . '    var dojoConfig = ' . Json::encode($djConfigValues) . ';' . PHP_EOL
+            . '    var dojoConfig = ' . Json::encode($configArray) . ';' . PHP_EOL
             . (($this->_isXhtml) ? '//]]>' : '//-->') . PHP_EOL
             . '</script>';
 
@@ -1072,8 +1002,7 @@ EOJ;
         }
 
         $enc = 'UTF-8';
-        if ($this->view instanceof \Zend\View\Renderer\RendererInterface
-            && method_exists($this->view, 'getEncoding')
+        if (method_exists($this->view, 'getEncoding')
         ) {
             $enc = $this->view->getEncoding();
         }
@@ -1097,16 +1026,6 @@ EOJ;
     protected function _renderExtras()
     {
         $js = array();
-
-        $modules = array_filter($this->getModules(), function($moduleName) {
-            return strpos($moduleName, '/') === false;
-        });
-
-        if (!empty($modules)) {
-            foreach ($modules as $module) {
-                $js[] = 'dojo.require("' . $this->view->escapeJs($module) . '");';
-            }
-        }
 
         $onLoadActions = array();
         // Get Zend specific onLoad actions; these will always be first to

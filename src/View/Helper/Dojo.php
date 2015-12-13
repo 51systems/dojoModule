@@ -2,6 +2,7 @@
 
 namespace Dojo\View\Helper;
 
+use Dojo\Builder\Configuration;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Renderer\RendererInterface as Renderer;
 
@@ -41,12 +42,10 @@ class Dojo extends AbstractHelper
      *
      * Retrieve container from registry or create new container and store in
      * registry.
-     *
-     * @return void
      */
     public function __construct()
     {
-        $this->_container = new Configuration();
+        $this->_container = new Configuration(self::useDeclarative());
     }
 
     public function setView(Renderer $view)
