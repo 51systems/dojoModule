@@ -3,8 +3,10 @@
 
 namespace Dojo;
 
-class Dojo
+class Constants
 {
+    const CDN_VERSION = '1.10.4';
+
     /**
      * Base path to AOL CDN
      */

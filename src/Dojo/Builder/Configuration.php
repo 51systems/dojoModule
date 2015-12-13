@@ -1,7 +1,8 @@
 <?php
 
-namespace Dojo\View\Helper;
+namespace Dojo\Builder;
 
+use Dojo\Constants;
 use Zend\Json\Expr as JsonExpr;
 use Zend\Json\Json;
 use Dojo\View\Exception\InvalidArgumentException;
@@ -44,19 +45,19 @@ class Configuration
      * Base CDN url to utilize
      * @var string
      */
-    protected $_cdnBase = \Dojo\Dojo::CDN_BASE_GOOGLE;
+    protected $_cdnBase = Constants::CDN_BASE_GOOGLE;
 
     /**
      * Path segment following version string of CDN path
      * @var string
      */
-    protected $_cdnDojoPath = \Dojo\Dojo::CDN_DOJO_PATH_GOOGLE;
+    protected $_cdnDojoPath = Constants::CDN_DOJO_PATH_GOOGLE;
 
     /**
      * Dojo version to use from CDN
      * @var string
      */
-    protected $_cdnVersion = '1.10.4';
+    protected $_cdnVersion = Constants::CDN_VERSION;
 
     /**
      * Has the dijit loader been registered?
@@ -209,11 +210,6 @@ class Configuration
                 case 'requiremodules':
                     $this->requireModule($value);
                     break;
-                case 'modulepaths':
-                    foreach($value as $module => $path) {
-                        $this->registerModulePath($module, $path);
-                    }
-                    break;
                 case 'layers':
                     $value = (array) $value;
                     foreach($value as $layer) {
@@ -297,33 +293,6 @@ class Configuration
     public function getModules()
     {
         return $this->_modules;
-    }
-
-    /**
-     * Register a module path
-     *
-     * @param  string $module The module to register a path for
-     * @param  string $path The path to register for the module
-     * @return Configuration
-     */
-    public function registerPackagePath($module, $path)
-    {
-        $path = (string) $path;
-        if (!in_array($module, $this->_packagePaths)) {
-            $this->_packagePaths[$module] = $path;
-        }
-
-        return $this;
-    }
-
-    /**
-     * List registered module paths
-     *
-     * @return array
-     */
-    public function getPackagePaths()
-    {
-        return $this->_packagePaths;
     }
 
     /**
