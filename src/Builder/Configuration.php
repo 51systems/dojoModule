@@ -894,11 +894,11 @@ EOJ;
 
             //Check to see if the stylesheet is prefixed by any of the
             //package names. If so, replace the prefix by the package path.
-            if (($pos = stripos($stylesheet, '/') !== false)) {
+            if (($pos = stripos($stylesheet, '/')) !== false) {
                 $prefix = substr($stylesheet, 0, $pos);
 
                 if (isset($packages[$prefix])) {
-                    $stylesheet = $packages['location'] . '/' . substr($stylesheet, strlen($prefix));
+                    $stylesheet = $packages[$prefix]['location'] . '/' . substr($stylesheet, strlen($prefix)+1);
                 }
             }
 
@@ -939,7 +939,7 @@ EOJ;
         $packages = $config->getPackages();
         if (!empty($packages)) {
             //If we don't grab array_values, an object is output
-            $configArray['packages'] = $packages;
+            $configArray['packages'] = array_values($packages);
         }
 
         //Require dependencies

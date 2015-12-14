@@ -37,8 +37,14 @@ class DojoConfig extends ArrayObject
     {
         if (!is_array($options)) {
             $options = [
-                'path' => $options
+                'location' => $options
             ];
+        } else {
+            if (!isset($options['location'])) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Options for package "%s" must contains a location entry'
+                ), $name);
+            }
         }
 
         if (!isset($options['name'])) {
@@ -46,7 +52,7 @@ class DojoConfig extends ArrayObject
         }
 
         //remove trailing slashes
-        $options['path'] = rtrim('/', $options['path']);
+        $options['location'] = rtrim($options['location'], '/');
 
         $this->packages[$name] = $options;
 

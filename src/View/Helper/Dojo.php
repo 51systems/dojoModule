@@ -138,4 +138,11 @@ class Dojo extends AbstractHelper
     {
         return (self::PROGRAMMATIC_NOSCRIPT === self::$_useProgrammatic);
     }
+
+    function __toString()
+    {
+        return $this->_container->__toString();
+    }
+
+
 }

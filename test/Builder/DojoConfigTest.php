@@ -23,7 +23,7 @@ class DojoConfigTest extends \PHPUnit_Framework_TestCase
         $p = $c->getPackage($packageName);
 
         $this->assertEquals($packageName, $p['name']);
-        $this->assertEquals($packagePath, $p['path']);
+        $this->assertEquals($packagePath, $p['location']);
     }
 
     public function testSet()
