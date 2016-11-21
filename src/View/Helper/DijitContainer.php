@@ -53,7 +53,7 @@ abstract class DijitContainer extends Dijit
      * @param  string $id
      * @param  array $params
      * @param  array $attribs
-     * @return void
+     * @return $this
      */
     public function captureStart($id, array $params = array(), array $attribs = array())
     {
@@ -68,7 +68,7 @@ abstract class DijitContainer extends Dijit
         );
 
         ob_start();
-        return;
+        return $this;
     }
 
     /**

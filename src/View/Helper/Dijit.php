@@ -22,7 +22,6 @@
 
 namespace Dojo\View\Helper;
 
-use Dojo\View\Helper\Dojo;
 use Zend\View\Helper\AbstractHtmlElement;
 use Zend\View\Renderer\RendererInterface as Renderer;
 use Zend\Json\Json;
@@ -297,10 +296,9 @@ abstract class Dijit extends AbstractHtmlElement
      * Cast a boolean to a string value
      *
      * @param  mixed $item
-     * @param  string $key
      * @return void
      */
-    protected function _castBoolToString(&$item, $key)
+    protected function _castBoolToString(&$item)
     {
         if (!is_bool($item)) {
             return;

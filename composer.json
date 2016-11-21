@@ -19,11 +19,15 @@
   ],
   "require": {
     "php": ">=5.3",
+    "zendframework/zend-mvc": "^2 || ^3",
     "zendframework/zend-stdlib": ">=2.5.0",
     "zendframework/zend-view": ">=2.5.0",
     "zendframework/zend-modulemanager": ">=2.5.0",
     "zendframework/zend-config": ">=2.5.0",
-    "zendframework/zend-json": ">=2.5.0"
+    "zendframework/zend-json": ">=2.5.0",
+
+
+    "doctrine/doctrine-orm-module": "^1"
   },
   "require-dev": {
     "phpunit/PHPUnit": "~4.0"
@@ -31,8 +35,7 @@
   "autoload": {
     "psr-4": {
       "Dojo\\": "src/"
-    },
-    "classmap" : ["Module.php"]
+    }
   },
   "autoload-dev": {
     "psr-4": {

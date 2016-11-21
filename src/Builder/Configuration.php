@@ -3,7 +3,6 @@
 namespace Dojo\Builder;
 
 use Dojo\Constants;
-use Zend\Json\Expr as JsonExpr;
 use Zend\Json\Json;
 use Dojo\View\Exception\InvalidArgumentException;
 use Dojo\View\Exception\RuntimeException;
@@ -222,9 +221,6 @@ class Configuration
                     break;
                 case 'localpath':
                     $this->setLocalPath($value);
-                    break;
-                case 'djconfig':
-                    $this->setDjConfig($value);
                     break;
                 case 'stylesheets':
                     $value = (array) $value;
@@ -549,7 +545,7 @@ class Configuration
     /**
      * Start capturing routines to run onLoad
      *
-     * @return bool
+     * @return $this
      */
     public function onLoadCaptureStart()
     {
@@ -559,13 +555,13 @@ class Configuration
 
         $this->_captureLock = true;
         ob_start();
-        return;
+        return $this;
     }
 
     /**
      * Stop capturing routines to run onLoad
      *
-     * @return bool
+     * @return $this
      */
     public function onLoadCaptureEnd()
     {
@@ -573,7 +569,7 @@ class Configuration
         $this->_captureLock = false;
 
         $this->addOnLoad($data);
-        return true;
+        return $this;
     }
 
     /**

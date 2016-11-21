@@ -5,6 +5,7 @@ namespace Dojo\View\Helper;
 use Dojo\Builder\Configuration;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Renderer\RendererInterface as Renderer;
+use Zend\View\View;
 
 /**
  *
@@ -23,7 +24,7 @@ class Dojo extends AbstractHelper
     /**#@-*/
 
     /**
-     * @var Zend_View_Interface
+     * @var View
      */
     public $view;
 

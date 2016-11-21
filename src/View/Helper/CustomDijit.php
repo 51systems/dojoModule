@@ -76,7 +76,7 @@ class CustomDijit extends DijitContainer
      */
     private function _validateDojoType($params)
     {
-        if (!array_key_exists('dojoType', $params) && !array_key_exists('data-dojo-type')
+        if (!array_key_exists('dojoType', $params) && !array_key_exists('data-dojo-type', $params)
             && (null === $this->_defaultDojoType)
         ) {
             throw new InvalidArgumentException('No dojoType specified; cannot create dijit');
@@ -103,12 +103,14 @@ class CustomDijit extends DijitContainer
      * @param  string $id
      * @param  array $params
      * @param  array $attribs
-     * @return void
+     * @return $this
      */
     public function captureStart($id, array $params = array(), array $attribs = array())
     {
         $this->_validateDojoType($params);
 
-        return parent::captureStart($id, $params, $attribs);
+        parent::captureStart($id, $params, $attribs);
+
+        return $this;
     }
 }

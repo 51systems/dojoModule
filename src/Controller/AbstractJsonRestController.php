@@ -8,7 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 use Zend\View\Model\JsonModel;
 use Zend\Http\Request;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;

@@ -28,6 +28,7 @@ class JsonRestStore extends CustomDijit
      * @param string $url Endpoint URL for the store
      * @param array $params
      * @param array $attribs
+     * @return string
      */
     public function __invoke($id, $url, array $params = array(), array $attribs = array())
     {

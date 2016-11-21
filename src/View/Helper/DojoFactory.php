@@ -2,9 +2,8 @@
 
 namespace Dojo\View\Helper;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Dojo\View\Helper\Dojo;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Factory to Dojo View helper
@@ -15,10 +14,9 @@ use Dojo\View\Helper\Dojo;
 class DojoFactory implements FactoryInterface
 {
     /**
-     * @param \Zend\ServiceManager\ServiceLocatorInterface $serviceLocator
-     * @return Dojo
+     * @inheritdoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new Dojo();
     }
