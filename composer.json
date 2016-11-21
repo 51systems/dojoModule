@@ -2,6 +2,7 @@
   "name": "51systems/dojo-module",
   "description": "Provides Dojo 1.x module for zf2",
   "type": "library",
+  "license": "BSD-3-Clause",
   "keywords": [
     "dojo",
     "zf2"
