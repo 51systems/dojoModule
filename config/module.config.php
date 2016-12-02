@@ -3,10 +3,10 @@
 return array(
     'view_helpers' => array(
         'factories' => array(
-            'dojo' => 'Dojo\View\Helper\DojoFactory',
+            'dojo' => \Dojo\View\Helper\DojoFactory::class,
         ),
         'invokables' => array(
-            'JsonRestStore' => 'Dojo\View\Helper\JsonRestStore'
+            'jsonRestStore' => \Dojo\View\Helper\JsonRestStore::class
         )
     ),
 );
