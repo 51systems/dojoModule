@@ -7,6 +7,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Http\Response;
+use Zend\Hydrator\HydratorPluginManager;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Hydrator\HydratorInterface;
 use Zend\View\Model\JsonModel;
@@ -26,7 +27,15 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
      * Static hydrator instance.
      * @var HydratorInterface
      */
-    private static $hydratorInstance;
+    private $hydratorInstance;
+
+    /**
+     * The hydration manager that will be used by default to
+     * construct the {@link $hydratorInstance}
+     *
+     * @var HydratorPluginManager
+     */
+    private $hydratorManager;
 
     /**
      * Returns the Entity manager to be used for database operations.
@@ -45,22 +54,25 @@ abstract class AbstractJsonRestController extends AbstractRestfulController
     abstract protected function getEntity($id);
 
     /**
+     * AbstractJsonRestController constructor.
+     * @param HydratorPluginManager $hydratorManager manager that will supply the hydrator
+     */
+    public function __construct(HydratorPluginManager $hydratorManager)
+    {
+        $this->hydratorManager = $hydratorManager;
+    }
+
+    /**
      * Returns the hydrator to use for object hydration.
      * @return HydratorInterface
      */
     protected function getHydrator()
     {
-        if (!isset(self::$hydratorInstance)) {
-            if ($this->getEntityManager() == $this->getServiceLocator()->get('doctrine.entitymanager.orm_default')) {
-                //We are using the default entity manager. Its safe to use the default hydrator
-                $manager = $this->getServiceLocator()->get('hydratorManager');
-                self::$hydratorInstance = $manager->get(DoctrineObject::class);
-            } else {
-                self::$hydratorInstance = new DoctrineObject($this->getEntityManager());
-            }
+        if (!isset($this->hydratorInstance)) {
+            $this->hydratorInstance = $this->hydratorManager->get(DoctrineObject::class);
         }
 
-        return self::$hydratorInstance;
+        return $this->hydratorInstance;
     }
 
     /**

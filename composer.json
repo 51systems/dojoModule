@@ -26,7 +26,7 @@
     "zendframework/zend-modulemanager": ">=2.5.0",
     "zendframework/zend-config": ">=2.5.0",
     "zendframework/zend-json": ">=2.5.0",
-
+    "zendframework/zend-hydrator": "^2.0",
 
     "doctrine/doctrine-orm-module": "^1"
   },
