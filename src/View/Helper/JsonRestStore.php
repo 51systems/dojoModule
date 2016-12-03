@@ -3,7 +3,7 @@
 namespace Dojo\View\Helper;
 
 /**
- * Creates a declariative JsonRestStore.
+ * Creates a declarative JsonRestStore.
  *
  * @author Dustin Thomson <dthomson@51systems.com>
  */

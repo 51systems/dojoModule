@@ -8,11 +8,9 @@ use Zend\View\Renderer\RendererInterface as Renderer;
 use Zend\View\View;
 
 /**
+ * A view helper for configuring dojo and dojoConfig.
  *
- * @method void enable() Enables dojo
- * @method Configuration requireModule(string $modules)
- * @method Configuration setDijit(string $id, array $params) Set a programmatic dijit (overwrites)
- * @method Configuration addJavascript(string $js) Add arbitrary javascript to execute in dojo JS container
+ * @mixin Configuration
  */
 class Dojo extends AbstractHelper
 {
