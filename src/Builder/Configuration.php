@@ -930,7 +930,7 @@ EOJ;
     {
         $config = $this->getDojoConfig();
 
-        $configArray = [];
+        $configArray = $config->getArrayCopy();;
 
         $packages = $config->getPackages();
         if (!empty($packages)) {
